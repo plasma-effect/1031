@@ -1,36 +1,36 @@
-var image = new Array(
-    Image(120, 240),
-    Image(120, 240),
-    Image(120, 240),
-    Image(120, 240),
-    Image(120, 240),
-    Image(120, 240),
-    Image(120, 240),
-    Image(120, 240),
-    Image(120, 240),
-    Image(120, 240));
-
+ï»¿//CopyrightÂ©2014 plasma-effect(plasma-e)
+//Licensed under the MIT licence
 var value = new Array(0, 0, 0, 0);
+var images = new Image();
+var resultImages = new Image();
+var flag = -1;
+var timer;
 
-function imageLoad()
+function imageLoad(n)
 {
-    image[0].src = "img/0.png";
-    image[1].src = "img/1.png";
-    image[2].src = "img/2.png";
-    image[3].src = "img/3.png";
-    image[4].src = "img/4.png";
-    image[5].src = "img/5.png";
-    image[6].src = "img/6.png";
-    image[7].src = "img/7.png";
-    image[8].src = "img/8.png";
-    image[9].src = "img/9.png";
+    images.src = "img/" + n + ".png";
+    if (n == 9)
+        return;
+    images.onload = function () {
+        imageLoad(n + 1);
+    }
 }
+function resultImageLoad(n)
+{
+    resultImages.src = "img/Result" + n + ".png";
+    if (n == 9)
+        return;
+    resultImages.onload = function () {
+        resultImageLoad(n + 1);
+    }
+}
+
 
 function countUp(n)
 {
     value[n] = (value[n] + 1) % 10;
+    writeSlot();
 }
-
 function primeCheck(n)
 {
     var i = 3;
@@ -46,12 +46,10 @@ function primeCheck(n)
     }
     return true;
 }
-
 function getSum()
 {
     return 1000 * value[0] + 100 * value[1] + 10 * value[2] + value[3];
 }
-
 function matchCheck()
 {
     var i = 0;
@@ -96,42 +94,106 @@ function resultCheck()
 {
     var n = getSum();
     var m = matchCheck();
-    //1031‚©‚Ç‚¤‚©
+    //1031ã‹ã©ã†ã‹
     if (n == 1031)
         return resultData.is1031;
 
-    //1101‚©
+    //1101ã‹
     if (n == 1101)
         return resultData.is1101;
 
-    //ƒ]ƒ–Ú‚©
+    //ã‚¾ãƒ­ç›®ã‹
     if (value[0] == value[1] && value[1] == value[2] && value[2] == value[3])
         return resultData.isZoro;
 
-    //3ŒÂ‡‚Á‚Ä‚é‚©
+    //3å€‹åˆã£ã¦ã‚‹ã‹
     if (m == 3)
         return resultData.is3Match;
 
-    //ŠeŒ…‚Ì˜a‚ª20‚©‚Ç‚¤‚©
+    //å„æ¡ã®å’ŒãŒ20ã‹ã©ã†ã‹
     if ((value[0] + value[1] + value[2] + value[3]) == 20)
         return resultData.isSum20;
 
-    //ŠeŒ…‚Ì˜a‚ª10‚©‚Ç‚¤‚©
+    //å„æ¡ã®å’ŒãŒ10ã‹ã©ã†ã‹
     if ((value[0] + value[1] + value[2] + value[3]) == 10)
         return resultData.isSum10;
 
-    //˜a‚ª10‚ÌƒyƒA‚ğ‚Â‚©
+    //å’ŒãŒ10ã®ãƒšã‚¢ã‚’æŒã¤ã‹
     if (hasPair())
         return resultData.has10Pair;
 
-    //‘f”‚©‚Ç‚¤‚©
+    //ç´ æ•°ã‹ã©ã†ã‹
     if (primeCheck(n))
         return resultData.isPrime;
 
-    //13‚Ì”{”‚©‚Ç‚¤‚©
+    //13ã®å€æ•°ã‹ã©ã†ã‹
     if (n % 13 == 0)
         return resultData.is13Times;
     
-    //“Á‚É–³‚¢
+    //ç‰¹ã«ç„¡ã„
     return resultData.noData;
+}
+
+function writeSlot()
+{
+    var elem = document.getElementById("area");
+    elem.innerHTML =
+        "<img src=\"img/" + value[0] + ".png\" />" +
+        "<img src=\"img/" + value[1] + ".png\" />" +
+        "<img src=\"img/" + value[2] + ".png\" />" +
+        "<img src=\"img/" + value[3] + ".png\" />" + "<br />";
+}
+
+function buttonPress()
+{
+    if(flag==-1)
+    {
+        imageLoad(0);
+        resultImageLoad(0);
+        writeSlot();
+        timer = setInterval(countUp, 50, 0);
+        var bElem = document.getElementById("gameButton");
+        bElem.innerHTML="æ­¢ã‚ã‚‹";
+        flag = 0;
+    }
+    else if(flag==0)
+    {
+        clearInterval(timer);
+        timer = setInterval(countUp, 38, 1);
+        flag = 1;
+    }
+    else if (flag == 1)
+    {
+        clearInterval(timer);
+        timer = setInterval(countUp, 25, 2);
+        flag = 2;
+    }
+    else if (flag == 2)
+    {
+        clearInterval(timer);
+        timer = setInterval(countUp, 13, 3);
+        flag = 3;
+    }
+    else if (flag == 3)
+    {
+        clearInterval(timer);
+        setTimeout(function () {
+            var elem = document.getElementById("area");
+            elem.innerHTML = "<img src=\"img/Result" + resultCheck() + ".png\" /><br />";
+            elem = document.getElementById("gameButton");
+            elem.innerHTML = "ã‚‚ã†ä¸€å›ã‚„ã‚‹";
+            flag = 4;
+        }, 300);
+    }
+    else if(flag==4)
+    {
+        timer = setInterval(countUp, 50, 0);
+        var bElem = document.getElementById("gameButton");
+        bElem.innerHTML = "æ­¢ã‚ã‚‹";
+        flag = 0;
+        value[0] = 0;
+        value[1] = 0;
+        value[2] = 0;
+        value[3] = 0;
+    }
 }
