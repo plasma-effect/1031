@@ -84,7 +84,7 @@ var resultData =
         isSum10: 3,
         is3Match: 4,
         isZoro: 5,
-        has10Pair: 6,
+        isSorted: 6,
         isSum20: 7,
         is1101: 8,
         noData: 9
@@ -119,8 +119,8 @@ function resultCheck()
         return resultData.isSum10;
 
     //和が10のペアを持つか
-    if (hasPair())
-        return resultData.has10Pair;
+    if ((value[0]<=value[1])&&(value[1]<=value[2])&&(value[2]<=value[3]))
+        return resultData.isSorted;
 
     //素数かどうか
     if (primeCheck(n))
